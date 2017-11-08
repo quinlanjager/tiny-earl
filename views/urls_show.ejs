@@ -1,29 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <% include partials/_head.ejs %>
-  </head>
-  <body>
-    <section class="wrapper">
-      <% include partials/_header %>
-      <table>
-        <tr>
-          <th>Original URL</th>
-          <th>Shortened URL</th>
-          <th>Actions</th>
-        </tr>
-        <tr>
-          <td><%= longUrl %></td>
-          <td><a href="/u/<%= shortenedUrl %>"><%= shortenedUrl %></a></td>
-          <td>
-            <form id="changeForm" method="post" action="/urls/<%= shortenedUrl %>">
-              <input form="changeForm" name="newURL" type="text" placeholder="New URL">
-              <button form="changeForm">Change URL</button>
-            </form>
-          </td>
-        </tr>
-      </table>
-    <% include partials/_button %>
-  </section>
-  </body>
-</html>
+<% include partials/_head %>
+<table>
+  <tr>
+    <th>Original URL</th>
+    <th>Shortened URL</th>
+    <th>Actions</th>
+  </tr>
+  <tr>
+    <td><%= longUrl %></td>
+    <td><a href="/u/<%= shortenedUrl %>"><%= shortenedUrl %></a></td>
+    <td>
+      <!-- is hidden via css -->
+      <form id="changeForm" method="post" action="/urls/<%= shortenedUrl %>"> </form>
+      <input form="changeForm" name="newURL" type="text" placeholder="New URL">
+      <button form="changeForm">Change URL</button>
+    </td>
+  </tr>
+</table>
+<% include partials/_button %>
+<% include partials/_footer %>

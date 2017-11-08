@@ -22,6 +22,10 @@ function generateRandomString(){
   return resultString;
 }
 
+const templateVars = { 
+    urls: urlDatabase,
+}
+
 
 app.set('view engine', 'ejs');
 app.listen(PORT, () => {
@@ -31,25 +35,21 @@ app.listen(PORT, () => {
 app.use(express.static('assets')); 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true})); //urlencoded -> Parse from forms which are URL encoded, necessary to get that request body
-
-/**
- * @todo make username something globally accessible
- */
+app.use((req, res, next)=>{
+  // set the each time a request is made
+  templateVars.username = req.cookies.username;
+  next();
+})
 
 app.get(['/', '/urls/new'], (req, res) => {
-  const templateVars = {username : req.cookies.username};
   res.render('urls_new', templateVars);
 });
 
 // /urls/ requests
 app.get('/urls/:id', (req, res) => {
-  const shortenedUrl = req.params.id;
-  if(shortenedUrl in urlDatabase){
-    const templateVars = {
-      shortenedUrl : shortenedUrl,
-      longUrl : urlDatabase[shortenedUrl],
-      username : req.cookies.username
-    };
+  templateVars.shortenedUrl = req.params.id;
+  if(templateVars.shortenedUrl in urlDatabase){
+    templateVars.longUrl = urlDatabase[templateVars.shortenedUrl];
     res.render('urls_show', templateVars);
   } else {
     res.redirect('/404');
@@ -57,10 +57,6 @@ app.get('/urls/:id', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const templateVars = { 
-    urls: urlDatabase,
-    username : req.cookies.username
-  }
   res.render('urls_index', templateVars);
 });
 
@@ -122,3 +118,20 @@ app.post('/logout', (req, res) => {
 app.use((req, res) => {
   res.status(404).render('404.ejs', {username : req.cookies.username});
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

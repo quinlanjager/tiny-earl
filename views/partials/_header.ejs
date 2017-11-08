@@ -1,11 +1,16 @@
-<h1 class="title"><a href="/">TinyEarl &#128104;</a></h1>
-<form id="login" method="post" action="/login"></form>
-<% if(!username){ %>
-		<label id="login">Login:</label>
-		<input form="login" type="text" name="username" placeholder="User name">
-		<button form="login">Login</button>
-<% } else { %>
-		<h3>Welcome, <%= username %> </h3>
-		<button form="login" formaction="/logout">Logout</button>
-<% } %>
-
+<section class="header row">
+	<section class="column column-50 header-title">
+		<h1 class="title"><a href="/">TinyEarl &#128104;</a></h1>
+	</section>
+	<section class="column column-50 header-login">
+		<form id="login" method="post" action="/login"></form>
+		<% if(!username){ %>
+			<label id="login">Login:</label>
+			<input form="login" type="text" name="username" placeholder="User name">
+			<button form="login">Login</button>
+		<% } else { %>
+				<h3>Welcome, <%= username %> </h3>
+				<button form="login" formaction="/logout">Logout</button>
+		<% } %>
+	</section>
+</section>

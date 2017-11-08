@@ -1,29 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <% include partials/_head %>
-  </head>
-  <body>
-    <section class="wrapper">
-      <% include partials/_header %>
-      <table>
+<% include partials/_head %>
+<table>
+  <tr>
+    <th>Original URL</th>
+    <th>Shortened URL</th>
+    <th>Action</th>
+    </tr>
+    <% for(const url in urls){%>
       <tr>
-        <th>Original URL</th>
-        <th>Shortened URL</th>
-        </tr>
-        <% for(const url in urls){%>
-        <tr>
-          <td><%= urls[url] %></td>
-          <td><a href="/u/<%= url %>"><%= url %></a></td>
-          <td>
-              <!-- is hidden via css -->
-              <form id="deleteForm" method="post" action="/urls/<%= url %>/delete"></form> 
-              <button form="deleteForm"> Delete URL </button>
-          </td>
-        </tr>
-        <% }%>
-      </table>
-      <% include partials/_button %>
-    </section>
-  </body>
-</html>
+        <td><%= urls[url] %></td>
+        <td><a href="/u/<%= url %>"><%= url %></a></td>
+        <td>
+          <!-- is hidden via css -->
+          <form id="deleteForm" method="post" action="/urls/<%= url %>/delete"></form> 
+          <button form="deleteForm"> Delete URL </button>
+        </td>
+      </tr>
+  <% }%>
+</table>
+<% include partials/_button %>
+<% include partials/_footer %>
