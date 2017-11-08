@@ -20,7 +20,6 @@ function generateRandomString(){
   }
   return resultString;
 }
-
 app.set('view engine', 'ejs');
 
 app.listen(PORT, () => {
@@ -29,6 +28,10 @@ app.listen(PORT, () => {
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true})); //urlencoded -> Parse from forms which are URL encoded, necessary to get that request body
+
+/**
+ * @todo make username something globally accessible
+ */
 
 app.get(['/', '/urls/new'], (req, res) => {
   const templateVars = {username : req.cookies.username};
@@ -107,8 +110,12 @@ app.post('/login', (req, res) => {
   res.redirect('/')
 });
 
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
+  res.redirect('/')
+});
 
 // 404
 app.use((req, res) => {
-  res.status(404).render('404.ejs');
+  res.status(404).render('404.ejs', {username : req.cookies.username});
 });
