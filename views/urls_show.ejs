@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <% include partials/_head.ejs %>
+  </head>
+  <body>
+    <% include partials/_header %>
+    <table>
+      <tr>
+        <th>Original URL</th>
+        <th>Shortened URL</th>
+      </tr>
+      <tr>
+        <td><%= longUrl %></td>
+        <td><a href="/u/<%= shortenedUrl %>"><%= shortenedUrl %></a></td>
+      </tr>
+    <table>
+    <% include partials/_button %>
+  </body>
+</html>
