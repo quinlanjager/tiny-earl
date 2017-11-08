@@ -4,19 +4,21 @@
     <% include partials/_head %>
   </head>
   <body>
-    <% include partials/_header %>
-    <table>
+    <section class="wrapper">
+      <% include partials/_header %>
+      <table>
       <tr>
         <th>Original URL</th>
         <th>Shortened URL</th>
-      </tr>
-    <% for(const url in urls){%>
-      <tr>
-        <td><%= urls[url] %></td>
-        <td><a href="/u/<%= url %>"><%= url %></a></td>
-      </tr>
-    <% }%>
-    <table>
-    <% include partials/_button %>
+        </tr>
+        <% for(const url in urls){%>
+        <tr>
+          <td><%= urls[url] %></td>
+          <td><a href="/u/<%= url %>"><%= url %></a></td>
+        </tr>
+        <% }%>
+      </table>
+      <% include partials/_button %>
+    </section>
   </body>
 </html>

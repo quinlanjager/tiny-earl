@@ -4,12 +4,14 @@
     <% include partials/_head %>
   </head>
   <body>
+    <section class="wrapper">
     <% include partials/_header %>
     <form id="submitForm" action="/urls" method="POST">
       <label for="longURL">Enter a URL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 400px">
       <input id="submit" type="submit" value="Submit">
     </form>
+  </section>
     <script type="text/javascript">
       const longURL = document.querySelector("#longURL");
       const form = document.querySelector("#submitForm");
