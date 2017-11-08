@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const PORT = process.env.port || 8080;
 
 const urlDatabase = {
@@ -26,10 +27,12 @@ app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
 
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true})); //urlencoded -> Parse from forms which are URL encoded, necessary to get that request body
 
 app.get(['/', '/urls/new'], (req, res) => {
-  res.render('urls_new');
+  const templateVars = {username : req.cookies.username};
+  res.render('urls_new', templateVars);
 });
 
 // /urls/ requests
@@ -38,7 +41,8 @@ app.get('/urls/:id', (req, res) => {
   if(shortenedUrl in urlDatabase){
     const templateVars = {
       shortenedUrl : shortenedUrl,
-      longUrl : urlDatabase[shortenedUrl]
+      longUrl : urlDatabase[shortenedUrl],
+      username : req.cookies.username
     };
     res.render('urls_show', templateVars);
   } else {
@@ -47,7 +51,10 @@ app.get('/urls/:id', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase }
+  const templateVars = { 
+    urls: urlDatabase,
+    username : req.cookies.username
+  }
   res.render('urls_index', templateVars);
 });
 
@@ -93,6 +100,13 @@ app.post('/urls/:id/delete', (req, res) => {
     res.status(404).render('404.ejs');
   }
 });
+
+app.post('/login', (req, res) => {
+  const username = req.body.username;
+  res.cookie('username', username);
+  res.redirect('/')
+});
+
 
 // 404
 app.use((req, res) => {

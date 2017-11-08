@@ -1,1 +1,10 @@
 <h1 class="title"><a href="/">TinyEarl &#128104;</a></h1>
+<% if(!username){%>
+<form id="login" method="post" action="/login">
+	<input form="login" type="text" name="username" defaultvalue="User name">
+	<button form="login">Login</button>
+</form>
+<% } else { %>
+	<h3>Welcome, <%= username %> </h3>
+<% } %>
+
