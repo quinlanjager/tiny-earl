@@ -1,7 +1,8 @@
 <h1 class="title"><a href="/">TinyEarl &#128104;</a></h1>
 <form id="login" method="post" action="/login"></form>
 <% if(!username){ %>
-		<input form="login" type="text" name="username" defaultvalue="User name">
+		<label id="login">Login:</label>
+		<input form="login" type="text" name="username" placeholder="User name">
 		<button form="login">Login</button>
 <% } else { %>
 		<h3>Welcome, <%= username %> </h3>

@@ -10,6 +10,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+
 function generateRandomString(){
   let resultString = "";
   let characters = "abcdefhijklmnopqrstuvwxyz";
@@ -20,12 +21,14 @@ function generateRandomString(){
   }
   return resultString;
 }
-app.set('view engine', 'ejs');
 
+
+app.set('view engine', 'ejs');
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
 
+app.use(express.static('assets')); 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true})); //urlencoded -> Parse from forms which are URL encoded, necessary to get that request body
 
@@ -49,7 +52,7 @@ app.get('/urls/:id', (req, res) => {
     };
     res.render('urls_show', templateVars);
   } else {
-    res.status(404).render('404.ejs');
+    res.redirect('/404');
   }
 });
 
@@ -69,7 +72,7 @@ app.get('/u/:id', (req, res) => {
     }
     res.redirect(longURL);
   } else {
-    res.status(404).render('404.ejs');
+    res.redirect('/404');
   }
 });
 
@@ -79,7 +82,7 @@ app.post('/urls', (req, res) => {
     urlDatabase[shortURL] = req.body.longURL;
     res.redirect(`/urls/${shortURL}`);
   } else {
-    res.status(404).render('404.ejs');
+    res.redirect('/404');
   }
 });
 
@@ -90,7 +93,7 @@ app.post('/urls/:id/', (req, res) => {
     urlDatabase[shortenedUrl] = newURL;
     res.redirect(`/urls/${shortenedUrl}`);
   } else {
-    res.status(404).render('404.ejs');
+    res.redirect('/404');
   }
 });
 
@@ -100,7 +103,7 @@ app.post('/urls/:id/delete', (req, res) => {
     delete urlDatabase[shortenedUrl];
     res.redirect("/urls");
   } else {
-    res.status(404).render('404.ejs');
+    res.redirect('/404');
   }
 });
 
