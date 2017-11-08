@@ -10,10 +10,17 @@
         <tr>
           <th>Original URL</th>
           <th>Shortened URL</th>
+          <th>Actions</th>
         </tr>
         <tr>
           <td><%= longUrl %></td>
           <td><a href="/u/<%= shortenedUrl %>"><%= shortenedUrl %></a></td>
+          <td>
+            <form id="changeForm" method="post" action="/urls/<%= shortenedUrl %>">
+              <input form="changeForm" name="newURL" type="text" placeholder="New URL">
+              <button form="changeForm">Change URL</button>
+            </form>
+          </td>
         </tr>
       </table>
     <% include partials/_button %>

@@ -22,16 +22,19 @@ function generateRandomString(){
 
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.urlencoded({extended: true})); //urlencoded -> Parse from forms which are URL encoded
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
 
-// get requests
+app.use(bodyParser.urlencoded({extended: true})); //urlencoded -> Parse from forms which are URL encoded, necessary to get that request body
+
 app.get(['/', '/urls/new'], (req, res) => {
   res.render('urls_new');
 });
 
 // /urls/ requests
-app.get('/urls/:shortened', (req, res) => {
-  const shortenedUrl = req.params.shortened;
+app.get('/urls/:id', (req, res) => {
+  const shortenedUrl = req.params.id;
   if(shortenedUrl in urlDatabase){
     const templateVars = {
       shortenedUrl : shortenedUrl,
@@ -60,7 +63,6 @@ app.get('/u/:id', (req, res) => {
   }
 });
 
-//post requests
 app.post('/urls', (req, res) => {
   if(req.body.longURL){ // If an id from form, longUrl was submitted
     const shortURL = generateRandomString();
@@ -71,11 +73,28 @@ app.post('/urls', (req, res) => {
   }
 });
 
+app.post('/urls/:id/', (req, res) => {
+  const shortenedUrl = req.params.id;
+  const newURL = req.body.newURL;
+  if(shortenedUrl in urlDatabase){
+    urlDatabase[shortenedUrl] = newURL;
+    res.redirect(`/urls/${shortenedUrl}`);
+  } else {
+    res.status(404).render('404.ejs');
+  }
+});
+
+app.post('/urls/:id/delete', (req, res) => {
+  const shortenedUrl = req.params.id;
+  if(shortenedUrl in urlDatabase){
+    delete urlDatabase[shortenedUrl];
+    res.redirect("/urls");
+  } else {
+    res.status(404).render('404.ejs');
+  }
+});
+
 // 404
 app.use((req, res) => {
   res.status(404).render('404.ejs');
-});
-
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
 });
