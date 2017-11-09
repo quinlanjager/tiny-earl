@@ -1,3 +1,6 @@
+//Dev only
+const reload = require('reload');
+
 require('dotenv').config();
 const express = require('express');
 const app = express();
@@ -6,8 +9,12 @@ const cookieParser = require('cookie-parser');
 const PORT = process.env.port || 8080;
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "1" : {
+    "b2xVn2": "http://www.lighthouselabs.ca"
+  },
+  "2" : {
+     "9sm5xK": "http://www.google.com"
+  }
 };
 
 const users = {
@@ -23,6 +30,7 @@ const users = {
   }
 }
 
+/* Handy helpers */
 function generateRandomString(){
   let resultString = "";
   let characters = "abcdefhijklmnopqrstuvwxyz";
@@ -34,13 +42,34 @@ function generateRandomString(){
   return resultString;
 }
 
-const templateVars = { 
-    urls: urlDatabase,
-    user: undefined
+const checkLoggedIn = (req) => req.cookies.user_id in users;
+
+const findLongUrl = (req) => {
+  for(const userId in urlDatabase){
+    for(const shortUrl in urlDatabase[userId]){
+      if(shortUrl === req.params.id){
+        return urlDatabase[userId][shortUrl];
+      }
+    }
+  }
 }
 
+const checkUrlIdExistsForLoggedInUser = (req) => req.params.id in generateTemplateVars(req).urls;
+
+const generateTemplateVars = (req) => {
+  const { user_id } = req.cookies;
+  return {
+    urls : urlDatabase[user_id],
+    user : users[user_id],
+    longUrl : req.longUrl,
+    shortenedUrl : req.shortenedUrl
+  }
+}
 
 app.set('view engine', 'ejs');
+
+reload(app);
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
@@ -49,40 +78,34 @@ app.listen(PORT, () => {
 app.use(express.static('assets')); 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true})); //urlencoded -> Parse from forms which are URL encoded, necessary to get that request body
-app.use((req, res, next)=>{
-  // set the each time a request is made
-  if(req.cookies.user_id && req.cookies.user_id in users){
-    templateVars.user = users[req.cookies.user_id];
-  }
-  else {
-    templateVars.user = undefined;
-  }
-  next();
-})
 
 /* Routes */
 app.get(['/', '/urls/new'], (req, res) => {
-  res.render('urls_new', templateVars);
+  if(checkLoggedIn(req)){
+    res.render('urls_new', generateTemplateVars(req));
+  } else {
+    res.redirect('/register');
+  }
 });
 
 // /urls/ requests
 app.get('/urls/:id', (req, res) => {
-  templateVars.shortenedUrl = req.params.id;
-  if(templateVars.shortenedUrl in urlDatabase){
-    templateVars.longUrl = urlDatabase[templateVars.shortenedUrl];
-    res.render('urls_show', templateVars);
+  if(checkUrlIdExistsForLoggedInUser(req)){
+    req.shortenedUrl = req.params.id;
+    req.longUrl = urlDatabase[req.cookies.user_id][req.shortenedUrl];
+    res.render('urls_show', generateTemplateVars(req));
   } else {
     res.redirect('/404');
   }
 });
 
 app.get('/urls', (req, res) => {
-  res.render('urls_index', templateVars);
+  res.render('urls_index', generateTemplateVars(req));
 });
 
 app.get('/u/:id', (req, res) => {
-  if(req.params.id in urlDatabase){
-    let longURL = urlDatabase[req.params.id];
+  let longURL = findLongUrl(req);
+  if(longURL){
     if(!longURL.match(/https?:\/\//)){
       longURL = "http://" + longURL;
     }
@@ -93,11 +116,11 @@ app.get('/u/:id', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  res.render('urls_register', templateVars);
+  res.render('urls_register', generateTemplateVars(req));
 });
 
 app.get('/login', (req, res) => {
-  res.render('urls_login', templateVars);
+  res.render('urls_login', generateTemplateVars(req));
 });
 
 app.post('/register', (req, res) => {
@@ -135,21 +158,22 @@ app.post('/urls', (req, res) => {
 app.post('/urls/:id/', (req, res) => {
   const shortenedUrl = req.params.id;
   const newURL = req.body.newURL;
-  if(shortenedUrl in urlDatabase){
-    urlDatabase[shortenedUrl] = newURL;
+  if(checkUrlIdExistsForLoggedInUser(req)){
+    const { user_id } = req.cookies;
+    urlDatabase[user_id][shortenedUrl] = newURL;
     res.redirect(`/urls/${shortenedUrl}`);
   } else {
-    res.redirect('/404');
+    res.status(401).send("Not allowed to do that.");
   }
 });
 
 app.post('/urls/:id/delete', (req, res) => {
   const shortenedUrl = req.params.id;
-  if(shortenedUrl in urlDatabase){
+  if(checkUrlIdExistsForLoggedInUser(req)){
     delete urlDatabase[shortenedUrl];
     res.redirect("/urls");
   } else {
-    res.redirect('/404');
+    res.status(401).send("Not allowed to do that.");
   }
 });
 
@@ -173,7 +197,7 @@ app.post('/logout', (req, res) => {
 // 404
 app.use((req, res) => {
   const stat = 404;  
-  res.status(stat).render('404.ejs', templateVars);
+  res.status(stat).render('404.ejs', generateTemplateVars(req));
 });
 
 
