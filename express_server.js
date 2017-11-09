@@ -81,7 +81,6 @@ app.use(bodyParser.urlencoded({extended: true})); //urlencoded -> Parse from for
 
 /* Routes */
 app.get(['/', '/urls/new'], (req, res) => {
-  console.log("Hi from get!");
   if(checkLoggedIn(req)){
     res.render('urls_new', generateTemplateVars(req));
   } else {
@@ -141,7 +140,6 @@ app.post('/register', (req, res) => {
         email : req.body.email,
         password : hash
       }
-      console.log(newUser.password);
       users[id] = newUser;
       res.cookie("user_id", id);
       res.redirect('/register');
@@ -182,13 +180,13 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+  const {email, password} = req.body;
   let foundUser = false;
   for(let user in users){
     user = users[user];
-    if(user.email === req.body.email){
+    if(user.email === email){
       foundUser = true;
-      bcrypt.hash(req.body.password, user.password, (err, result) =>{
-        console.log(user.email, "hi from the hash");
+      bcrypt.hash(password, user.password, (err, result) =>{
         if(result){
           res.cookie('user_id', user.id);
           res.redirect('/')
