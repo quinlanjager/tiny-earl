@@ -1,12 +1,13 @@
-//Dev only
-const reload = require('reload');
-
 require('dotenv').config();
 const express = require('express');
+const bcrypt = require('bcrypt');
 const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const PORT = process.env.port || 8080;
+
+/* bcrypt settings */
+const saltRounds = 10;
 
 const urlDatabase = {
   "1" : {
@@ -68,7 +69,6 @@ const generateTemplateVars = (req) => {
 
 app.set('view engine', 'ejs');
 
-reload(app);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
@@ -81,6 +81,7 @@ app.use(bodyParser.urlencoded({extended: true})); //urlencoded -> Parse from for
 
 /* Routes */
 app.get(['/', '/urls/new'], (req, res) => {
+  console.log("Hi from get!");
   if(checkLoggedIn(req)){
     res.render('urls_new', generateTemplateVars(req));
   } else {
@@ -134,14 +135,17 @@ app.post('/register', (req, res) => {
       }
     }
     const id = generateRandomString();
-    const newUser = {
-      id,
-      email : req.body.email,
-      password : req.body.password
-    }
-    users[id] = newUser;
-    res.cookie("user_id", id);
-    res.redirect('/register');
+    bcrypt.hash(req.body.password, saltRounds, (err, hash) =>{
+      const newUser = {
+        id,
+        email : req.body.email,
+        password : hash
+      }
+      console.log(newUser.password);
+      users[id] = newUser;
+      res.cookie("user_id", id);
+      res.redirect('/register');
+    });
   }
 });
 
@@ -178,15 +182,25 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+  let foundUser = false;
   for(let user in users){
     user = users[user];
-    if(user.email === req.body.email && user.password === req.body.password){
-      res.cookie('user_id', user.id);
-      res.redirect('/')
-    }
+    if(user.email === req.body.email){
+      foundUser = true;
+      bcrypt.hash(req.body.password, user.password, (err, result) =>{
+        console.log(user.email, "hi from the hash");
+        if(result){
+          res.cookie('user_id', user.id);
+          res.redirect('/')
+        } else {
+          res.status(403).send('Incorrect email or password');   
+        }
+      });
+    } 
   }
-  res.status(403).send('Incorrect email or password');
-  
+  if (!foundUser){
+    res.status(403).send('Incorrect email or password');
+  }
 });
 
 app.post('/logout', (req, res) => {
