@@ -3,7 +3,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const app = express();
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const PORT = process.env.port || 8080;
 
 /* bcrypt settings */
@@ -43,7 +43,7 @@ function generateRandomString(){
   return resultString;
 }
 
-const checkLoggedIn = (req) => req.cookies.user_id in users;
+const checkLoggedIn = (req) => req.session.user_id in users;
 
 const findLongUrl = (req) => {
   for(const userId in urlDatabase){
@@ -58,7 +58,7 @@ const findLongUrl = (req) => {
 const checkUrlIdExistsForLoggedInUser = (req) => req.params.id in generateTemplateVars(req).urls;
 
 const generateTemplateVars = (req) => {
-  const { user_id } = req.cookies;
+  const { user_id } = req.session;
   return {
     urls : urlDatabase[user_id],
     user : users[user_id],
@@ -76,7 +76,10 @@ app.listen(PORT, () => {
 
 /* Middleware */
 app.use(express.static('assets')); 
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  secret: 'kingkong'
+}));
 app.use(bodyParser.urlencoded({extended: true})); //urlencoded -> Parse from forms which are URL encoded, necessary to get that request body
 
 /* Routes */
@@ -90,9 +93,11 @@ app.get(['/', '/urls/new'], (req, res) => {
 
 // /urls/ requests
 app.get('/urls/:id', (req, res) => {
+  const {user_id} = req.session;
+  const {id} = req.params;
   if(checkUrlIdExistsForLoggedInUser(req)){
-    req.shortenedUrl = req.params.id;
-    req.longUrl = urlDatabase[req.cookies.user_id][req.shortenedUrl];
+    req.longUrl = urlDatabase[user_id][id];
+    req.shortenedUrl = id;
     res.render('urls_show', generateTemplateVars(req));
   } else {
     res.redirect('/404');
@@ -141,8 +146,8 @@ app.post('/register', (req, res) => {
         password : hash
       }
       users[id] = newUser;
-      res.cookie("user_id", id);
-      res.redirect('/register');
+      req.session.user_id = id;
+      res.redirect('/');
     });
   }
 });
@@ -161,7 +166,7 @@ app.post('/urls/:id/', (req, res) => {
   const shortenedUrl = req.params.id;
   const newURL = req.body.newURL;
   if(checkUrlIdExistsForLoggedInUser(req)){
-    const { user_id } = req.cookies;
+    const { user_id } = req.session;
     urlDatabase[user_id][shortenedUrl] = newURL;
     res.redirect(`/urls/${shortenedUrl}`);
   } else {
@@ -188,7 +193,7 @@ app.post('/login', (req, res) => {
       foundUser = true;
       bcrypt.hash(password, user.password, (err, result) =>{
         if(result){
-          res.cookie('user_id', user.id);
+          req.session.user_id = user.id;
           res.redirect('/')
         } else {
           res.status(403).send('Incorrect email or password');   
@@ -202,7 +207,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/')
 });
 
