@@ -10,13 +10,13 @@ form.addEventListener("submit", (event)=>{
       strong.innerHTML = "Please input a valid URL.";
       warning.setAttribute("id","warning");
       warning.appendChild(strong);
-      document.querySelector("form").appendChild(warning);
+      form.appendChild(warning);
             
-      for(const child of form.children){
-        if(child.type ==="submit"){
+    }
+    for(const child of form.children){
+      if(child){
         child.blur();
-        }
       }
     }
-  }
+  }   
 });

@@ -4,12 +4,11 @@
 	</section>
 	<section class="column column-50 header-login">
 		<form id="login" method="post" action="/login"></form>
-		<% if(!username){ %>
-			<label id="login">Login:</label>
-			<input form="login" type="text" name="username" placeholder="User name">
-			<button form="login">Login</button>
+		<% if(!user){ %>
+			<a class="button" href="/register" title="register">Register</a>
+			<a href="/login" title="login">Login</a>
 		<% } else { %>
-				<h3>Welcome, <%= username %> </h3>
+				<p><%= user.email %></p>
 				<button form="login" formaction="/logout">Logout</button>
 		<% } %>
 	</section>

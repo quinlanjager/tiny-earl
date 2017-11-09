@@ -1,0 +1,13 @@
+<% include partials/_head %>
+<section class="submitBox">
+	<h2>Login</h2>
+	<form id="loginForm" method="post" action="/login">
+		<label>E-mail</label>
+		<input type="email" name="email" placeholder="email">
+		<label>Password</label>
+		<input type="password" name="password" placeholder="password">
+		<button form="loginForm">Login</button>
+	</form>
+</section>
+
+<% include partials/_footer %>

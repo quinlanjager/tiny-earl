@@ -1,10 +1,12 @@
 <% include partials/_head %>
-
-<form id="submitForm" action="/urls" method="POST">
-  <label for="longURL">Enter a URL:</label>
-  <input id="longURL" type="text" name="longURL" placeholder="http://">
-  <button form="submitForm">Submit</button>
-</form>
-<script type="text/javascript" src="main.js"></script>
+<section class="submitBox">
+	<h2>Create a new URL</h2>
+	<form id="submitForm" action="/urls" method="POST">
+  	<label for="longURL">Enter a URL:</label>
+  	<input id="longURL" type="text" name="longURL" placeholder="http://">
+  	<button form="submitForm">Submit</button>
+	</form>
+</section>
+<script type="text/javascript" src="/main.js"></script>
 
 <% include partials/_footer %>
