@@ -10,9 +10,10 @@
         <td><%= urls[url] %></td>
         <td><a href="/u/<%= url %>"><%= url %></a></td>
         <td>
+          <a class="button" href="/urls/<%= url %>" title="edit">Edit</a>
+          <button form="deleteForm"> Delete URL </button>
           <!-- is hidden via css -->
           <form id="deleteForm" method="post" action="/urls/<%= url %>/delete"></form> 
-          <button form="deleteForm"> Delete URL </button>
         </td>
       </tr>
   <% }%>

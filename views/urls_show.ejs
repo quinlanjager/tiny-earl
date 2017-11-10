@@ -9,10 +9,10 @@
     <td><%= longUrl %></td>
     <td><a href="/u/<%= shortenedUrl %>"><%= shortenedUrl %></a></td>
     <td>
-      <!-- is hidden via css -->
-      <form id="changeForm" method="post" action="/urls/<%= shortenedUrl %>"> </form>
       <input form="changeForm" name="newURL" type="text" placeholder="New URL">
       <button form="changeForm">Change URL</button>
+      <!-- is hidden via css -->
+      <form id="changeForm" method="post" action="/urls/<%= shortenedUrl %>"> </form>
     </td>
   </tr>
 </table>
