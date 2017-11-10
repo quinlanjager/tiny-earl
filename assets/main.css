@@ -49,6 +49,14 @@ input[form="changeForm"]{
   display: inline;
   margin-right: 32px;
 }
-a.button{
+.header-login>a.button{
   margin-right: 32px;
+}
+td{
+  padding: 0;
+}
+td>a.button{
+  margin-right: 16px;
+  margin-top:27px;
+  margin-bottom: 0;
 }

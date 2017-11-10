@@ -117,7 +117,9 @@ app.post('/urls', (req, res) => {
     const {user_id} = req.session;
     if(req.body.longURL){ // If an id from form, longUrl was submitted
       const shortURL = generateRandomString();
-      urlDatabase[user_id] = {};
+      if(!urlDatabase[user_id]){
+        urlDatabase[user_id] = {};
+      }
       urlDatabase[user_id][shortURL] = req.body.longURL;
       res.redirect(`/urls/${shortURL}`);
       return;
@@ -275,17 +277,3 @@ app.get('/u/:id', (req, res) => {
 
 // 404 if no other get/post request could be matched
 app.use(generateErrorPage('404'));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
