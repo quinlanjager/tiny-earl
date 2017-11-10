@@ -6,11 +6,11 @@ TinyEarl is a web application used to shorten URLs. This full stack web app is b
 
 **Index screen when logged in:**
 
-![URLs index page](./assets/urls_index.png)
+![URLs index page](./docs/urls_index.png)
 
 **Generate new URL screen when logged in:**
 
-![New URL generation page](./assets/urls_new.png)
+![New URL generation page](./docs/urls_new.png)
 
 ## Dependencies and Frameworks
 
