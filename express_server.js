@@ -21,7 +21,7 @@ const users = {
 };
 const errors = {
   '404' : 'we couldn\'t find the page you were asking for.',
-  '403' : 'This page requires a higher level of access. Try logging in!',
+  '403' : 'This page can\'t be completed with your credentials.',
   'Incorrect credentials' : 'the username or password submitted didn\'t match our records.',
   'Account exists' : 'an account is already associated with that email.'
 };
@@ -29,10 +29,11 @@ const quotes = [
   'Your URL deserves to be tiny',
   'Quality tiny URLs for cheap',
   'Canadian made tiny URLs',
-  'Artisan tiny URLs',
-  'Now hiring URL makers',
+  'Only the finest tiny URLs',
+  'Now hiring URL artists',
   'So sweet, so delicious',
-  'Fresh baked tiny URLs'
+  'Fresh baked tiny URLs',
+  'Premium quality tiny URLs'
 ]
 
 /* bcrypt setting */
@@ -54,9 +55,6 @@ function generateRandomString(){
 
 const checkLoggedIn = (req) => req.session.user_id in users;
 
-// @TODO: change into just find shortened URL
-
-
 const findShortUrl = (req) => {
   for(const userId in urlDatabase){
     for(const shortUrl in urlDatabase[userId]){
@@ -66,17 +64,6 @@ const findShortUrl = (req) => {
     }
   }
 };
-
-
-// const findLongUrl = (req) => {
-//   for(const userId in urlDatabase){
-//     for(const shortUrl in urlDatabase[userId]){
-//       if(shortUrl === req.params.id){
-//         return urlDatabase[userId][shortUrl][url];
-//       }
-//     }
-//   }
-// };
 
 const generateTemplateVars = (req) => {
   const { user_id } = req.session;

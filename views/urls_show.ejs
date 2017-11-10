@@ -4,7 +4,7 @@
     <th>Original URL</th>
     <th>Shortened URL</th>
     <th>Stats</th>
-    <th>Action</th>
+    <th>Edit Destination</th>
   </tr>
   <tr>
     <td class="longUrl"><%= urls[urlId].longUrl %></td>
@@ -14,12 +14,12 @@
         Unique Visits: <%= urls[urlId].visitors.length %>
     </td>
     <td>
-      <input form="changeForm" name="newURL" type="text" placeholder="New URL">
+      <input form="changeForm" name="newURL" type="text" placeholder="New destination">
       <button form="changeForm">Change URL</button>
       <!-- is hidden via css -->
       <form id="changeForm" method="post" action="/urls/<%= urls[urlId].id %>"> </form>
     </td>
   </tr>
 </table>
-<% include partials/_button %>
+<% include partials/_button %> <p><a href="/urls/">See all your URLs</a></p>
 <% include partials/_footer %>

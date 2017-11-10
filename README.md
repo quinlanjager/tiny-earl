@@ -36,3 +36,6 @@ TinyEarl is a web application used to shorten URLs. This full stack web app is b
 After registering an account, users can create short urls that will be associated with their account. These urls can be shared anywhere. 
 
 Client-side session management (implemented using cookie-sessions) makes the application stateful without compromising security. Bcrypt is used for password encryption to ensure the protection of user information. 
+
+Users can also track how many times a URL has been visited and how many unique visitors the URL has had.
+
