@@ -6,11 +6,18 @@ const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const PORT = process.env.port || 8080;
 
-const urlDatabase = {};
-const users = {
+const urlDatabase = {
   '1' : {
-    '3445' : 'http://www.example.com'
+    '3445' : {
+      longUrl : 'http://www.example.com',
+      dateCreated : undefined,
+      visited : 0,
+      visitors : [],
+      }
   }
+};
+const users = {
+  
 };
 const errors = {
   '404' : 'we couldn\'t find the page you were asking for.',
@@ -18,10 +25,19 @@ const errors = {
   'Incorrect credentials' : 'the username or password submitted didn\'t match our records.',
   'Account exists' : 'an account is already associated with that email.'
 };
+const quotes = [
+  'Your URL deserves to be tiny',
+  'Quality tiny URLs for cheap',
+  'Canadian made tiny URLs',
+  'Artisan tiny URLs',
+  'Now hiring URL makers',
+  'So sweet, so delicious',
+  'Fresh baked tiny URLs'
+]
 
 /* bcrypt setting */
-const saltRounds = 10;
 
+const saltRounds = 10;
 
 /** Handy helper functions */
 
@@ -38,7 +54,10 @@ function generateRandomString(){
 
 const checkLoggedIn = (req) => req.session.user_id in users;
 
-const findLongUrl = (req) => {
+// @TODO: change into just find shortened URL
+
+
+const findShortUrl = (req) => {
   for(const userId in urlDatabase){
     for(const shortUrl in urlDatabase[userId]){
       if(shortUrl === req.params.id){
@@ -48,13 +67,25 @@ const findLongUrl = (req) => {
   }
 };
 
+
+// const findLongUrl = (req) => {
+//   for(const userId in urlDatabase){
+//     for(const shortUrl in urlDatabase[userId]){
+//       if(shortUrl === req.params.id){
+//         return urlDatabase[userId][shortUrl][url];
+//       }
+//     }
+//   }
+// };
+
 const generateTemplateVars = (req) => {
   const { user_id } = req.session;
+  const quote = quotes[Math.floor(Math.random()*quotes.length)]; // generate random quote for the header.
   return {
     urls : urlDatabase[user_id],
     user : users[user_id],
-    longUrl : req.longUrl,
-    shortenedUrl : req.shortenedUrl
+    urlId : req.urlId,
+    quote
   };
 };
 
@@ -117,10 +148,17 @@ app.post('/urls', (req, res) => {
     const {user_id} = req.session;
     if(req.body.longURL){ // If an id from form, longUrl was submitted
       const shortURL = generateRandomString();
+      const date = new Date(Date.now());
       if(!urlDatabase[user_id]){
         urlDatabase[user_id] = {};
       }
-      urlDatabase[user_id][shortURL] = req.body.longURL;
+      urlDatabase[user_id][shortURL] = {
+        id : shortURL,
+        longUrl : req.body.longURL,
+        dateCreated : date.toDateString(),
+        visited : 0,
+        visitors : []
+      }
       res.redirect(`/urls/${shortURL}`);
       return;
     }
@@ -148,13 +186,12 @@ app.get('/urls/:id', (req, res) => {
     return;
   }
   if(checkUrlIdExistsForUser(req)){
-    req.longUrl = urlDatabase[user_id][id];
-    req.shortenedUrl = id;
+    req.urlId = id;
     res.render('urls_show', generateTemplateVars(req));
     return;
   }
   //if URL exists, but doesn't belong to the current user.
-  if(findLongUrl(req)){
+  if(findShortUrl(req)){
     generateErrorPage('403')(req, res);
     return;
   }
@@ -263,12 +300,18 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/u/:id', (req, res) => {
-  let longURL = findLongUrl(req);
+  const shortUrl = findShortUrl(req);
+  let longURL = shortUrl.longUrl;
+  const userIP = req.ip;
   if(longURL){
     // Add at least HTTP if it's not present.
     if(!longURL.match(/https?:\/\//)){ 
       longURL = 'http://' + longURL;
     }
+    if(!shortUrl.visitors.includes(userIP)){
+      shortUrl.visitors.push(userIP);
+    } 
+    shortUrl.visited++;
     res.redirect(longURL);
     return;
   }

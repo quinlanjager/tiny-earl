@@ -3,17 +3,22 @@
   <tr>
     <th>Original URL</th>
     <th>Shortened URL</th>
+    <th>Stats</th>
     <th>Action</th>
-    </tr>
-    <% for(const url in urls){%>
+  </tr>
+    <% for(const urlId in urls){%>
       <tr>
-        <td class="longUrl"><%= urls[url] %></td>
-        <td><a href="/u/<%= url %>"><%= url %></a></td>
+        <td class="longUrl"><%= urls[urlId].longUrl %></td>
+        <td><a href="/u/<%= urlId %>"><%= urlId %></a></td>
+        <td>Date Created: <%= urls[urlId].dateCreated %></br>
+        Number of Visits: <%= urls[urlId].visited %></br>
+        Unique Visits: <%= urls[urlId].visitors.length %>
+    </td>
         <td>
-          <a class="button" href="/urls/<%= url %>" title="edit">Edit</a>
-          <button form="deleteForm_<%= url %>"> Delete URL </button>
+          <a class="button" href="/urls/<%= urlId %>" title="edit">Edit</a>
+          <button form="deleteForm_<%= urlId %>"> Delete URL </button>
           <!-- is hidden via css -->
-          <form id="deleteForm_<%= url %>" method="post" action="/urls/<%= url %>/delete"></form> 
+          <form id="deleteForm_<%= urlId %>" method="post" action="/urls/<%= urlId %>/delete"></form> 
         </td>
       </tr>
   <% }%>

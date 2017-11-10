@@ -1,7 +1,7 @@
 .container{
   position: absolute;
   margin:auto;
-  max-width:1000px;
+  max-width:1100px;
   top:0;
   right:0;
   bottom:0;
@@ -39,6 +39,8 @@ h3{
 }
 input[form="changeForm"]{
   margin-right: 16px;
+  margin-top: 16px;
+margin-bottom: 16px;
   width:300px;
 }
 .header-login{
@@ -54,6 +56,7 @@ input[form="changeForm"]{
 }
 td{
   padding: 0;
+  vertical-align: middle;
 }
 td>a.button{
   margin-right: 16px;

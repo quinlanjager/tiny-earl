@@ -3,16 +3,21 @@
   <tr>
     <th>Original URL</th>
     <th>Shortened URL</th>
-    <th>Actions</th>
+    <th>Stats</th>
+    <th>Action</th>
   </tr>
   <tr>
-    <td class="longUrl"><%= longUrl %></td>
-    <td><a href="/u/<%= shortenedUrl %>"><%= shortenedUrl %></a></td>
+    <td class="longUrl"><%= urls[urlId].longUrl %></td>
+    <td><a href="/u/<%= urls[urlId].id %>"><%= urls[urlId].id %></a></td>
+    <td>Date Created: <%= urls[urlId].dateCreated %></br>
+        Number of Visits: <%= urls[urlId].visited %></br>
+        Unique Visits: <%= urls[urlId].visitors.length %>
+    </td>
     <td>
       <input form="changeForm" name="newURL" type="text" placeholder="New URL">
       <button form="changeForm">Change URL</button>
       <!-- is hidden via css -->
-      <form id="changeForm" method="post" action="/urls/<%= shortenedUrl %>"> </form>
+      <form id="changeForm" method="post" action="/urls/<%= urls[urlId].id %>"> </form>
     </td>
   </tr>
 </table>
