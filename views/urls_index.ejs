@@ -10,10 +10,11 @@
       <tr>
         <td class="longUrl"><%= urls[urlId].longUrl %></td>
         <td><a href="/u/<%= urlId %>"><%= urlId %></a></td>
-        <td>Date Created: <%= urls[urlId].dateCreated %></br>
-        Number of Visits: <%= urls[urlId].visited %></br>
-        Unique Visits: <%= urls[urlId].visitors.length %>
-    </td>
+        <td>
+          Date Created: <%= urls[urlId].dateCreated %></br>
+          Number of Visits: <%= urls[urlId].stats.totalVisitors %></br>
+          Unique Visits: <%= Object.keys(urls[urlId].stats.visitors).length %>
+        </td>
         <td>
           <a class="button" href="/urls/<%= urlId %>" title="edit">Edit</a>
           <button form="deleteForm_<%= urlId %>"> Delete URL </button>

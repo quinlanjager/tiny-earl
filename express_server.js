@@ -12,13 +12,22 @@ const urlDatabase = {
       longUrl : 'http://www.example.com',
       dateCreated : undefined,
       visited : 0,
-      visitors : [],
+      stats: {
+          visitors : {
+              '3145' : { 
+                dateVisited : '10-20-2017'
+              }
+          },
+          totalVisitors : 10
+        }
       }
   }
 };
+
 const users = {
-  
+
 };
+
 const errors = {
   '404' : 'we couldn\'t find the page you were asking for.',
   '403' : 'This page can\'t be completed with your credentials.',
@@ -143,8 +152,10 @@ app.post('/urls', (req, res) => {
         id : shortURL,
         longUrl : req.body.longURL,
         dateCreated : date.toDateString(),
-        visited : 0,
-        visitors : []
+        stats: {
+          visitors : {},
+          totalVisitors : 0
+        }
       }
       res.redirect(`/urls/${shortURL}`);
       return;
@@ -288,6 +299,7 @@ app.post('/logout', (req, res) => {
 
 app.get('/u/:id', (req, res) => {
   const shortUrl = findShortUrl(req);
+  const date = new Date(Date.now());
   let longURL = shortUrl.longUrl;
   const userIP = req.ip;
   if(longURL){
@@ -295,10 +307,12 @@ app.get('/u/:id', (req, res) => {
     if(!longURL.match(/https?:\/\//)){ 
       longURL = 'http://' + longURL;
     }
-    if(!shortUrl.visitors.includes(userIP)){
-      shortUrl.visitors.push(userIP);
-    } 
-    shortUrl.visited++;
+    if(!(userIP in shortUrl.stats.visitors)){
+      shortUrl.stats.visitors[userIP] = {
+        dateVisited : date.toDateString()
+      }
+    }
+    shortUrl.stats.totalVisitors++;
     res.redirect(longURL);
     return;
   }
