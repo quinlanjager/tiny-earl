@@ -1,28 +1,7 @@
 <% include partials/_head %>
-<table>
-  <tr>
-    <th>Original URL</th>
-    <th>Shortened URL</th>
-    <th>Stats</th>
-    <th>Edit Destination</th>
-  </tr>
-  <tr>
-    <td class="longUrl"><%= urls[urlId].longUrl %></td>
-    <td><a href="/u/<%= urls[urlId].id %>"><%= urls[urlId].id %></a></td>
-    <td>Date Created: <%= urls[urlId].dateCreated %></br>
-        Number of Visits: <%= urls[urlId].stats.totalVisitors %></br>
-        Unique Visits: <%= Object.keys(urls[urlId].stats.visitors).length %>
-    </td>
-    <td>
-      <input form="changeForm" name="newURL" type="text" placeholder="New destination">
-      <button form="changeForm">Change URL</button>
-      <!-- is hidden via css -->
-      <form id="changeForm" method="post" action="/urls/<%= urls[urlId].id %>"> </form>
-    </td>
-  </tr>
-</table>
-  <script type="text/javascript" src="/chartist/dist/chartist.min.js">
-    console.log(<% urls %>)
-  </script>
-</script>
+<h2>Url Stats</h2>
+<a class="link" href="/u/<%= urls[urlId].id %>"><%= urls[urlId].id %></a>
+
+<script type="text/javascript" src="/chartist/dist/chartist.min.js"></script>
+<script type="text/javascript" src="/chart.js"></script>
 <% include partials/_footer %>

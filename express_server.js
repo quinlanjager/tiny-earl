@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const app = express();
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
+const fs = require('fs');
 const PORT = process.env.port || 8080;
 
 const urlDatabase = {
@@ -223,6 +224,30 @@ app.post('/urls/:id/', (req, res) => {
   }
   generateErrorPage('403')(req, res); 
 });
+
+app.get('/urls/:id/stats', (req, res) => {
+  const {user_id} = req.session;
+  const {id} = req.params;
+  if(!checkLoggedIn(req)){
+    generateErrorPage('403')(req, res);
+    return;
+  }
+
+  if(checkUrlIdExistsForUser(req)){
+    req.urlId = id;
+    /// write to JSON first
+    fs.writeFile(`assets/${id}_stats.json`, JSON.stringify(findShortUrl(req).stats), (err) =>{
+      if(err){
+        console.log(err);
+      }
+      console.log("Done writing!");
+      res.render('urls_show_stats', generateTemplateVars(req));
+      return;
+    });
+  }
+  //if URL exists, but doesn't belong to the current user.
+});
+
 
 /** /register routes */
 
