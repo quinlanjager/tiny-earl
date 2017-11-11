@@ -13,7 +13,7 @@
         <td>
           Date Created: <%= urls[urlId].dateCreated %></br>
           Number of Visits: <%= urls[urlId].stats.totalVisitors %></br>
-          Unique Visits: <%= Object.keys(urls[urlId].stats.visitors).length %>
+          Unique Visits: <%= urls[urlId].stats.totalUnique.length %>
         </td>
         <td>
           <a class="button" href="/urls/<%= urlId %>" title="edit">Edit</a>

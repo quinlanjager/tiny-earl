@@ -11,7 +11,7 @@
     <td><a href="/u/<%= urls[urlId].id %>"><%= urls[urlId].id %></a></td>
     <td>Date Created: <%= urls[urlId].dateCreated %></br>
         Number of Visits: <%= urls[urlId].stats.totalVisitors %></br>
-        Unique Visits: <%= Object.keys(urls[urlId].stats.visitors).length %>
+        Unique Visits: <%= urls[urlId].stats.totalUnique.length %>
     </td>
     <td>
       <input form="changeForm" name="newURL" type="text" placeholder="New destination">

@@ -14,12 +14,12 @@ const urlDatabase = {
       dateCreated : undefined,
       visited : 0,
       stats: {
-          visitors : {
-              '3145' : { 
-                dateVisited : '10-20-2017'
-              }
+          'Sat Nov 11 2017' : {
+            unique : [],
+            totalVisitors: 1
           },
-          totalVisitors : 10
+          totalUnique : [],
+          totalVisitors : 0,
         }
       }
   }
@@ -154,8 +154,8 @@ app.post('/urls', (req, res) => {
         longUrl : req.body.longURL,
         dateCreated : date.toDateString(),
         stats: {
-          visitors : {},
-          totalVisitors : 0
+          totalUnique : [],
+          totalVisitors : 0,
         }
       }
       res.redirect(`/urls/${shortURL}`);
@@ -332,10 +332,18 @@ app.get('/u/:id', (req, res) => {
     if(!longURL.match(/https?:\/\//)){ 
       longURL = 'http://' + longURL;
     }
-    if(!(userIP in shortUrl.stats.visitors)){
-      shortUrl.stats.visitors[userIP] = {
-        dateVisited : date.toDateString()
-      }
+    // tracking
+    if(!(shortUrl.stats.totalUnique.includes(userIP))){
+      shortUrl.stats.totalUnique.push(userIP);
+    }
+    if(!(date.toDateString() in shortUrl.stats)){
+      shortUrl.stats[date.toDateString()] = {
+        totalUnique : [userIP],
+        totalVisitors : 1
+      } 
+    } else {
+      shortUrl.stats[date.toDateString].totalUnique.push(userIP);
+      shortUrl.stats[date.toDateString].totalVisitors++;     
     }
     shortUrl.stats.totalVisitors++;
     res.redirect(longURL);
