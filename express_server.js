@@ -14,10 +14,12 @@ const urlDatabase = {
       dateCreated : undefined,
       visited : 0,
       stats: {
+        dates : {
           'Sat Nov 11 2017' : {
             unique : [],
             totalVisitors: 1
           },
+        },
           totalUnique : [],
           totalVisitors : 0,
         }
@@ -154,8 +156,9 @@ app.post('/urls', (req, res) => {
         longUrl : req.body.longURL,
         dateCreated : date.toDateString(),
         stats: {
+          dates : {},
           totalUnique : [],
-          totalVisitors : 0,
+          totalVisitors : 0
         }
       }
       res.redirect(`/urls/${shortURL}`);
@@ -240,7 +243,6 @@ app.get('/urls/:id/stats', (req, res) => {
       if(err){
         console.log(err);
       }
-      console.log("Done writing!");
       res.render('urls_show_stats', generateTemplateVars(req));
       return;
     });
@@ -336,14 +338,14 @@ app.get('/u/:id', (req, res) => {
     if(!(shortUrl.stats.totalUnique.includes(userIP))){
       shortUrl.stats.totalUnique.push(userIP);
     }
-    if(!(date.toDateString() in shortUrl.stats)){
-      shortUrl.stats[date.toDateString()] = {
+    if(!(date.toDateString() in shortUrl.stats.dates)){
+      shortUrl.stats.dates[date.toDateString()] = {
         totalUnique : [userIP],
         totalVisitors : 1
       } 
     } else {
-      shortUrl.stats[date.toDateString].totalUnique.push(userIP);
-      shortUrl.stats[date.toDateString].totalVisitors++;     
+      shortUrl.stats.dates[date.toDateString()].totalUnique.push(userIP);
+      shortUrl.stats.dates[date.toDateString()].totalVisitors++;     
     }
     shortUrl.stats.totalVisitors++;
     res.redirect(longURL);
