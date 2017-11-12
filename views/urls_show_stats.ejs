@@ -1,6 +1,12 @@
 <% include partials/_head %>
-<h2>Url Stats</h2>
-<a class="link" href="/u/<%= urls[urlId].id %>"><%= urls[urlId].id %></a>
-<div class="ct-chart ct-perfect-fourth"></div>
+<h2>Traffic over the last 7 days for URL <span class="shortUrl"><%= urls[urlId].id %></h2>
+<div class="ct-chart"></div>
+<ul>Legend
+	<li class="legend-series-a"><strong>Total visitors</strong></li>
+	<li class="legend-series-b"><strong>Total unique visitors</strong></li>
+</ul>
 
+
+<script type="text/javascript" src="/chartist/dist/chartist.min.js"></script>
+<script type="text/javascript" src="/chart.js"></script>
 <% include partials/_footer %>

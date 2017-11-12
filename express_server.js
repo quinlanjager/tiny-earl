@@ -10,30 +10,54 @@ const PORT = process.env.port || 8080;
 const urlDatabase = {
   '1' : {
     '3445' : {
+      id : '3445',
       longUrl : 'http://www.example.com',
-      dateCreated : undefined,
-      visited : 0,
+      dateCreated : 'Sun Nov 5 2017',
       stats: {
         dates : {
+          'Mon Nov 6 2017' : {
+            totalUnique : [1, 2, 3, 4, 5, 6],
+            totalVisitors: 34
+          },
+          'Tues Nov 7 2017' : {
+            totalUnique : [1, 2],
+            totalVisitors: 12
+          },
+          'Wed Nov 8 2017' : {
+            totalUnique : [1, 2, 3, 4, 5, 6, 7],
+            totalVisitors: 23
+          },
+          'Thurs Nov 9 2017' : {
+            totalUnique : [1, 2, 3, 4],
+            totalVisitors: 10
+          },
+          'Fri Nov 10 2017' : {
+            totalUnique : [1, 2, 3, 4, 5],
+            totalVisitors: 16
+          },
           'Sat Nov 11 2017' : {
-            unique : [],
-            totalVisitors: 1
+            totalUnique : [1, 2, 3],
+            totalVisitors: 18
           },
         },
-          totalUnique : [],
-          totalVisitors : 0,
+          totalUnique : [1, 2, 3, 4, 5, 6, 7],
+          totalVisitors : 133,
         }
       }
   }
 };
 
 const users = {
-
+  '1' : {
+    id : '1',
+    email : 'test@tinyearl.com',
+    password : '$2a$10$zghY2CV5MpHvv8xpfqdnsepzF5jHB352vbBnzu79aXmJ93I9PfaB2'
+  }
 };
 
 const errors = {
   '404' : 'we couldn\'t find the page you were asking for.',
-  '403' : 'This page can\'t be completed with your credentials.',
+  '403' : 'This request can\'t be completed with your credentials.',
   'Incorrect credentials' : 'the username or password submitted didn\'t match our records.',
   'Account exists' : 'an account is already associated with that email.'
 };
@@ -247,7 +271,7 @@ app.get('/urls/:id/stats', (req, res) => {
       return;
     });
   }
-  //if URL exists, but doesn't belong to the current user.
+  // TODO: if URL exists, but doesn't belong to the current user.
 });
 
 
@@ -335,23 +359,33 @@ app.get('/u/:id', (req, res) => {
       longURL = 'http://' + longURL;
     }
     // tracking
-    if(!(shortUrl.stats.totalUnique.includes(userIP))){
-      shortUrl.stats.totalUnique.push(userIP);
-    }
     if(!(date.toDateString() in shortUrl.stats.dates)){
       shortUrl.stats.dates[date.toDateString()] = {
         totalUnique : [userIP],
         totalVisitors : 1
       } 
-    } else {
+    }
+    if(!(shortUrl.stats.totalUnique.includes(userIP))){
+      shortUrl.stats.totalUnique.push(userIP);
       shortUrl.stats.dates[date.toDateString()].totalUnique.push(userIP);
-      shortUrl.stats.dates[date.toDateString()].totalVisitors++;     
     }
     shortUrl.stats.totalVisitors++;
+    shortUrl.stats.dates[date.toDateString()].totalVisitors++;     
     res.redirect(longURL);
     return;
   }
   generateErrorPage('404')(req, res);
+});
+
+app.get('/urls/:id/stats', (req, res) => {
+  if(checkLoggedIn(req)){
+    const {id} = req.params;
+    if(checkUrlIdExistsForUser(req)){
+      res.sendFile(`id_stats.json`, {root:'./assets/'});
+      return;
+    }
+  }
+  generateErrorPage('403')(req, res); 
 });
 
 // 404 if no other get/post request could be matched
