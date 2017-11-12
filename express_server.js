@@ -259,7 +259,6 @@ app.get('/urls/:id/stats', (req, res) => {
     generateErrorPage('403')(req, res);
     return;
   }
-
   if(checkUrlIdExistsForUser(req)){
     req.urlId = id;
     /// write to JSON first
@@ -270,8 +269,9 @@ app.get('/urls/:id/stats', (req, res) => {
       res.render('urls_show_stats', generateTemplateVars(req));
       return;
     });
+  } else {
+    generateErrorPage('403')(req, res);
   }
-  // TODO: if URL exists, but doesn't belong to the current user.
 });
 
 

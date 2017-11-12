@@ -35,7 +35,6 @@ function drawChart(XMLHttpRequestObj){
 		const dates = Object.keys(stats.dates);
 		const totalVisitorsSeries = generateSeries(stats.dates, 'totalVisitors');
 		const totalUniqueVisitorsSeries = generateSeries(stats.dates, 'totalUnique');
-
 		// If there is less than 7 days of data.
 		while(dates.length < 7){
 			const lastDay = dates[0].split(" ");

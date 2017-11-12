@@ -12,7 +12,9 @@
     <td>Date Created: <%= urls[urlId].dateCreated %></br>
         Number of Visits: <%= urls[urlId].stats.totalVisitors %></br>
         Unique Visits: <%= urls[urlId].stats.totalUnique.length %></br>
-        <a href="/urls/<%= urls[urlId].id%>/stats">Graph of last 7 days.</a>
+        <%if(urls[urlId].stats.totalVisitors > 0){%>
+          <a href="/urls/<%= urls[urlId].id%>/stats">Graph of last 7 days.</a>
+        <%}%>
     </td>
     <td>
       <input form="changeForm" name="newURL" type="text" placeholder="New destination">
